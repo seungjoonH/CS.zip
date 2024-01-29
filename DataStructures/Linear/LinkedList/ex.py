@@ -1,143 +1,150 @@
 class Node:
-  def __init__(self, data):
-    self.data = data
-    self.link = None
+  def __init__(self, value):
+    self.value = value
+    self.next = None
 
 class LinkedList:
   def __init__(self):
     self.process = True
-    self.length = 0
-    self.root = None
+    self.head = None
 
   def visualize(self):
-    link = self.root
+    link = self.head
 
     while link:
-      print(link.data, end='')
-      link = link.link
+      print(link.value, end='')
+      link = link.next
       print(' > ', end='')
 
     print('NULL\n')
 
+  def length(self):
+    link, count = self.head, 0
+    while link: 
+      link = link.next
+      count += 1
+    return count
 
-  def add(self, data):
+  def add(self, value):
     if self.process: 
-      print(f'add({data})')
+      print(f'add({value})')
 
-    node = Node(data)
+    node = Node(value)
 
-    if self.root:
-      cur = self.root
+    if self.head:
+      cur = self.head
       temp = None
 
       while cur:
         temp = cur
-        cur = cur.link
+        cur = cur.next
 
-      temp.link = node
+      temp.next = node
 
     else:
-      self.root = node
-
-    self.length += 1
+      self.head = node
 
     if self.process: 
       self.visualize()
 
-  def insert(self, index, data):
-    if not (0 <= index < self.length):
+  def insert(self, index, value):
+    if not (0 <= index < self.length()):
       print('[ERROR] Insert failed.')
-      print(f'Index out of range: 0 ~ {self.length} but "{index}"\n')
+      print(f'Index out of range: 0 ~ {self.length()} but "{index}"\n')
       return
 
     if self.process: 
-      print(f'insert({index}, {data})')
+      print(f'insert({index}, {value})')
 
-    node = Node(data)
-    cur = self.root
+    node = Node(value)
+    cur = self.head
 
     if index == 0:
-      node.link = cur
-      self.root = node
+      node.next = cur
+      self.head = node
 
-    elif index == self.length - 1:
-      self.add(data)
+    elif index == self.length() - 1:
+      self.add(value)
       return
 
-    for count in range(1, self.length):
+    for count in range(1, self.length()):
       if index == count:
-        node.link = cur.link
-        cur.link = node
+        node.next = cur.next
+        cur.next = node
         break
 
-      cur = cur.link
-    
-    self.length += 1
+      cur = cur.next
 
     if self.process:
       self.visualize()
 
   def pop(self):
-    if self.process: 
-      print('pop()', end=' = ')
+    if not self.head:
+      print('[ERROR] Pop failed.')
+      print('List is Empty')
+      return
+    
+    print('pop()', end=' = ')
 
     rm_node = None
-    cur = self.root
+    cur = self.head
 
     while cur:
-      if not cur.link:
-        rm_node = self.root
-        self.root = None
+      if not cur.next:
+        rm_node = self.head
+        self.head = None
         break
 
-      if not cur.link.link:
-        rm_node = cur.link
-        cur.link = None
+      if not cur.next.next:
+        rm_node = cur.next
+        cur.next = None
         break
 
-      cur = cur.link
-
-    self.length -= 1
+      cur = cur.next
     
+    print(rm_node.value)
+
     if self.process: 
-      print(rm_node.data)
       self.visualize()
 
   def remove(self, index):
-    if not (0 <= index < self.length):
+    if not self.head:
       print('[ERROR] Remove failed.')
-      print(f'Index out of range: 0 ~ {self.length} but "{index}"\n')
+      print('List is Empty')
+      return
+    
+    if not (0 <= index < self.length()):
+      print('[ERROR] Remove failed.')
+      print(f'Index out of range: 0 ~ {self.length()} but "{index}"\n')
       return
 
-    if self.process: 
-      print(f'remove({index})', end=' = ')
+    print(f'remove({index})', end=' = ')
 
     rm_node = None
-    cur = self.root
+    cur = self.head
 
     if index == 0:
       rm_node = cur
-      self.root = cur.link
+      self.head = cur.next
 
-    elif index == self.length - 1:
+    elif index == self.length() - 1:
       self.pop()
       return
 
-    for count in range(1, self.length):
+    for count in range(1, self.length()):
       if index == count:
-        rm_node = cur.link
-        cur.link = cur.link.link
+        rm_node = cur.next
+        cur.next = cur.next.next
         break
 
-      cur = cur.link
-    
-    self.length -= 1
+      cur = cur.next
+
+    print(rm_node.value)
 
     if self.process: 
-      print(rm_node.data)
       self.visualize()
 
-    return rm_node.data
+    return rm_node.value
   
 def choose():
   print()
