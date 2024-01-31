@@ -19,9 +19,9 @@ public:
     }
     node* getHead();
     void add(int n);
-    void insert(int index, int n);
-    void pop();
-    void remove(int index);
+    bool insert(int index, int n);
+    bool pop();
+    bool remove(int index);
     void display(node* head);
 };
 
@@ -31,8 +31,8 @@ node* LinkedList::getHead() {
 
 void LinkedList::add(int n) {
     node* new_node = new node;
-    
     new_node->data = n;
+
     if(head == NULL) {
         head = new_node;
         tail = new_node;
@@ -42,13 +42,38 @@ void LinkedList::add(int n) {
     }
 }
 
-void LinkedList::insert(int index, int n) {
+bool LinkedList::insert(int index, int n) {
+    node* new_node = new node;
+    new_node->data = n;
 
+    if(index == 0) {
+        new_node->next_node = head;
+        head = new_node;
+        if(tail == NULL) {
+            tail = new_node;
+        } 
+     } else {
+        node* cur_node = head;
+        for(int i = 0; i < index - 1; i++) {
+            if(cur_node == NULL) {
+                cout << "\nTry another index (out of range)\n";
+                delete new_node;
+                return false;
+            }
+            cur_node = cur_node->next_node;
+        }
+        new_node->next_node = cur_node->next_node;
+        cur_node->next_node = new_node;
+        if(new_node->next_node == NULL) 
+            tail = new_node;
+    }
+    return true;
 }
 
-void LinkedList::pop() {
+bool LinkedList::pop() {
     if(head == NULL) {
-        cout << "LinkedList is empty";
+        cout << "\nLinkedList is empty\n";
+        return false;
     } else if(head == tail) {
         delete tail;
         head = tail = NULL;
@@ -61,10 +86,37 @@ void LinkedList::pop() {
         tail = prv_node;
         tail->next_node = NULL;
     }
+    return true;
 }
 
-void LinkedList::remove(int index) {
+bool LinkedList::remove(int index) {
+    if(head == NULL) {
+        cout << "LinkedList is empty\n";
+        return false;
+     } else if(index == 0) {
+        node* temp_node = head->next_node;
+        delete head;
+        head = temp_node;
 
+        if(head == NULL)
+            tail = NULL;
+     } else {
+        node* cur_node = head;
+        for(int i = 0; i < index - 1; i++) {
+            if(cur_node == NULL) {
+                cout << "\nTry another index (out of range)\n";
+                return false;
+            }
+            cur_node = cur_node->next_node;
+        }
+        node* temp_node = cur_node->next_node;
+        cur_node->next_node = temp_node->next_node;
+        delete temp_node;
+
+        if(temp_node->next_node == NULL) 
+            tail = temp_node;
+    }
+    return true;
 }
 
 void LinkedList::display(node* head) {
@@ -81,12 +133,14 @@ int main() {
     LinkedList lList;
 
     while(true) {
+        bool check = true;
+
         cout << "\n=== Linked List Tester ===\n" 
         << "(1) Add node\n"
         << "(2) Insert node\n"
         << "(3) Pop node\n"
         << "(4) Remove node\n"
-        << "(5) display node\n"
+        << "(5) Display node\n"
         << "(0) Exit\n"
         << "==========================\n";
 
@@ -106,23 +160,32 @@ int main() {
             int index = 0, num = 0;
             cout << "\nIndex? -> ";
             cin >> index;
-            cout << "\nAdd num? -> ";
+            cout << "Add num? -> ";
             cin >> num;
 
-            lList.insert(index, num);
-            cout << "\nInsert Completed!\n";
+            check = lList.insert(index, num);
+            if(check)
+                cout << "\nInsert Completed!\n";
+            else
+                cout << "\nInsert Failed!\n";
         } else if(selectNum == 3) {
-            lList.pop();
-            cout << "\nPop Completed!\n";
+            check = lList.pop();
+            if(check)
+                cout << "\nPop Completed!\n";
+            else
+                cout << "\nPop Failed!\n";
         } else if(selectNum == 4) {
             int index = 0;
             cout << "\nIndex? -> ";
             cin >> index;
 
-            lList.remove(index);
-            cout << "\nPop Completed!\n";
+            check = lList.remove(index);
+            if(check)
+                cout << "\nRemove Completed!\n";
+            else
+                cout << "\nRemove Failed!\n";
         } else if(selectNum == 5) {
-            cout << "++ My Linked List Data ++\n";
+            cout << "++ My Linked List Data ++\n" << "[ ";
             
             lList.display(lList.getHead());
         } else {
